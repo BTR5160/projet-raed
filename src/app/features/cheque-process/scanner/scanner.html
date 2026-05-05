@@ -1,56 +1,25 @@
-<div class="scanner-view">
-  <header class="view-header">
-    <div class="title-block">
-      <h1>Numérisation Intelligente</h1>
-      <p class="subtitle">Capture et Analyse IA en temps réel</p>
-    </div>
-  </header>
-
-  <div class="scanner-grid">
-    <!-- Zone de Scan -->
-    <section class="scan-area">
-      <div class="glass-drop-zone" 
-           [class.drag-over]="isDragging()"
-           (dragover)="onDragOver($event)"
-           (dragleave)="onDragLeave($event)"
-           (drop)="onDrop($event)"
-           (click)="fileInput.click()">
-        
-        <input type="file" #fileInput hidden accept="image/*" (change)="onFileSelected($event)">
-        
-        <div class="idle-ui">
-          <div class="icon-circle">📄</div>
-          <h3>Prêt pour la numérisation</h3>
-          <p>Glissez le chèque ici ou cliquez pour parcourir</p>
-          <button class="btn-pill-primary">Sélectionner un fichier</button>
-        </div>
-
-        @if (currentStep() === 'scanning' || currentStep() === 'analyzing') {
-          <div class="scan-overlay">
-            <div class="laser-beam"></div>
-            <div class="scan-status">{{ currentStep() === 'scanning' ? 'Numérisation...' : 'Analyse IA...' }}</div>
-          </div>
-        }
-      </div>
-    </section>
-
-    <!-- Aperçu Rapide -->
-    <section class="preview-panel">
-      <div class="panel-card">
-        <h3>Dernière capture</h3>
-        @if (processedCheque()) {
-          <div class="cheque-mini">
-            <img [src]="processedCheque()!.imagePath" alt="Aperçu">
-            <div class="mini-meta">
-              <strong>{{ processedCheque()!.chequeNumber.value }}</strong>
-              <span>Confiance: {{ (processedCheque()!.overallConfidence * 100).toFixed(0) }}%</span>
-            </div>
-          </div>
-          <button class="btn-full-validate" (click)="validateCheque()">Passer au traitement ✓</button>
-        } @else {
-          <div class="empty-state">Aucun chèque en attente</div>
-        }
-      </div>
-    </section>
+<div class="scanner-page">
+  <h1>Numériser Chèque</h1>
+  <div class="activity-cards">
+    <div class="metric">Chèques traités aujourd’hui: <strong>{{ processedTodayCount() }}</strong></div>
+    <div class="metric">Dernier: <strong>{{ lastProcessedCheque()?.id || 'Aucun' }}</strong></div>
   </div>
-</div>
+
+  <div class="drop-zone" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+    <input type="file" #fileInput hidden (change)="onFileSelected($event)">
+    <button type="button" (click)="fileInput.click()">Importer un chèque</button>
+  </div>
+
+  @if (currentStep() !== 'idle') {
+    <p>Progression: {{ scanProgress() }}%</p>
+  }
+
+  @if (processedCheque()) {
+    <div class="preview-card">
+      <p>ID: {{ processedCheque()!.id }}</p>
+      <p>Émetteur: {{ processedCheque()!.emitterName.value }}</p>
+      <button (click)="validateCheque()">Traiter Chèque</button>
+      <button (click)="reset()">Nouveau chèque</button>
+    </div>
+  }
+</div>
