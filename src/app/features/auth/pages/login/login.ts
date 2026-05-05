@@ -43,8 +43,6 @@ export class LoginComponent {
     this.authService.login(email!, password!).subscribe({
       next: (response) => {
         this.isLoading.set(false);
-        console.log('Login successful:', response);
-        
         // Redirect based on role
         if (response.user.role === 'ADMIN') {
           this.router.navigate(['/admin-dashboard']);
@@ -55,7 +53,6 @@ export class LoginComponent {
       error: (err) => {
         this.isLoading.set(false);
         this.errorMessage.set(err.message || 'Une erreur est survenue lors de la connexion.');
-        console.error('Login error:', err);
       }
     });
   }

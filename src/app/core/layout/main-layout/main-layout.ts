@@ -121,7 +121,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
             { path: '/admin-dashboard', label: 'Tableau de bord', icon: '⊞' },
             { path: '/user-management', label: 'Utilisateurs', icon: '👥' },
             { path: '/historique', label: 'Historique Global', icon: '⏱' },
-            { path: '/config', label: 'Système', icon: '⚙' }
+            { path: '/config', label: 'Système', icon: '⚙' },
+            { path: '/admin-profile', label: 'Profil', icon: '👤' }
         ]
     };
 }

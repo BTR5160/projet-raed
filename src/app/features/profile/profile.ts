@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { delay, of } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -15,30 +16,31 @@ export class ProfileComponent {
   private fb = inject(FormBuilder);
 
   user = this.authService.currentUser;
-  profileForm: FormGroup;
-  isSaving = signal<boolean>(false);
-  saveSuccess = signal<boolean>(false);
+  isSaving = signal(false);
+  success = signal('');
 
-  constructor() {
-    const currentUser = this.user();
-    this.profileForm = this.fb.group({
-      firstName: [currentUser?.firstName || '', Validators.required],
-      lastName: [currentUser?.lastName || '', Validators.required],
-      email: [{ value: currentUser?.email || '', disabled: true }, [Validators.required, Validators.email]],
-      phone: ['+216 71 000 000'],
-      agence: ['Siège Social - Tunis']
-    });
+  passwordForm = this.fb.group({
+    currentPassword: ['', [Validators.required]],
+    newPassword: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required]]
+  });
+
+  get passwordMismatch() {
+    const { newPassword, confirmPassword } = this.passwordForm.getRawValue();
+    return !!newPassword && !!confirmPassword && newPassword !== confirmPassword;
   }
 
-  onSubmit() {
-    if (this.profileForm.invalid) return;
+  updatePassword() {
+    if (this.passwordForm.invalid || this.passwordMismatch) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
 
     this.isSaving.set(true);
-    // Simulation
-    setTimeout(() => {
+    of(true).pipe(delay(1500)).subscribe(() => {
       this.isSaving.set(false);
-      this.saveSuccess.set(true);
-      setTimeout(() => this.saveSuccess.set(false), 3000);
-    }, 1500);
+      this.success.set('Mot de passe mis à jour avec succès.');
+      this.passwordForm.reset();
+    });
   }
 }

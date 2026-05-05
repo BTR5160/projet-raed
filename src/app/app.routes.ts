@@ -8,6 +8,7 @@ import { HistoriqueComponent } from './features/historique/historique';
 import { AdminDashboardComponent } from './features/dashboard/admin-dashboard';
 import { UserManagementComponent } from './features/user-management/user-management';
 import { ConfigurationComponent } from './features/configuration/configuration';
+import { ProfileComponent } from './features/profile/profile';
 
 import { authGuard, roleGuard, rootRedirectGuard } from './core/guards/auth.guard';
 import { pendingChangesGuard } from './core/guards/pending-changes.guard';
@@ -62,6 +63,12 @@ export const routes: Routes = [
       { 
         path: 'config', 
         component: ConfigurationComponent,
+        canActivate: [roleGuard],
+        data: { role: 'ADMIN' }
+      },
+      {
+        path: 'admin-profile',
+        component: ProfileComponent,
         canActivate: [roleGuard],
         data: { role: 'ADMIN' }
       }
