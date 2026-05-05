@@ -28,8 +28,6 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    console.log('Logging in with:', email);
-    
     if (password === 'error') {
       return throwError(() => new Error('Identifiants invalides')).pipe(delay(1500));
     }

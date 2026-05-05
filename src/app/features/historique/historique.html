@@ -1,77 +1,30 @@
 <div class="historique-view">
-  <header class="view-header">
-    <div class="title-block">
-      <h1>Historique des Traitements</h1>
-      <p class="subtitle">Archives complètes et traçabilité des opérations</p>
-    </div>
-    <button class="btn-export">
-      <span class="icon">⭳</span> Exporter les données
-    </button>
-  </header>
-
+  <header class="view-header"><h1>Historique des Traitements</h1></header>
   <section class="filter-panel card-premium">
-    <div class="search-box">
-      <span class="icon">🔍</span>
-      <input type="text" placeholder="Rechercher par N° de chèque, émetteur..." (input)="onSearchChange($event)">
-    </div>
-    <div class="filter-group">
-      <select class="select-modern" (change)="onStatusFilterChange($event)">
-        <option value="ALL">Tous les statuts</option>
-        <option value="VALIDATED">Validés</option>
-        <option value="PENDING">En attente</option>
-        <option value="REJECTED">Rejetés</option>
-      </select>
-    </div>
+    <input type="text" placeholder="Rechercher (ID/émetteur)" (input)="onSearchChange($event)">
+    <input type="date" (change)="onDateFilterChange($event)">
+    <select (change)="onStatusFilterChange($event)">
+      <option value="ALL">Tous les statuts</option><option value="VALIDATED">Validés</option><option value="PENDING">En attente</option><option value="REJECTED">Rejetés</option>
+    </select>
   </section>
-
   <section class="table-container card-premium">
     <table class="modern-table">
-      <thead>
-        <tr>
-          <th>Date & Heure</th>
-          <th>N° Chèque</th>
-          <th>Émetteur / Bénéficiaire</th>
-          <th>Montant</th>
-          <th>IA Score</th>
-          <th>Statut</th>
-          <th style="text-align: right;">Actions</th>
-        </tr>
-      </thead>
+      <thead><tr><th>ID</th><th>Date</th><th>Émetteur</th><th>Montant</th><th>Statut</th><th>Score IA</th></tr></thead>
       <tbody>
         @if (isLoading()) {
-          <tr><td colspan="7" class="loading-state"><span class="spinner-tiny"></span> Chargement...</td></tr>
-        } @else if (filteredCheques().length === 0) {
-          <tr><td colspan="7" class="empty-state">Aucune donnée trouvée</td></tr>
+          @for (row of [1,2,3,4,5]; track row) { <tr><td colspan="6" class="loading-state"><span class="spinner-tiny"></span> Chargement...</td></tr> }
+        } @else if (paginatedCheques().length === 0) {
+          <tr><td colspan="6" class="empty-state">Aucun résultat pour ces filtres.</td></tr>
         } @else {
-          @for (cheque of filteredCheques(); track cheque.id) {
+          @for (cheque of paginatedCheques(); track cheque.id) {
             <tr>
-              <td>
-                <div class="primary-text">{{ cheque.date.value | date:'dd MMM yyyy' }}</div>
-                <div class="secondary-text">{{ cheque.uploadDate | date:'HH:mm' }}</div>
-              </td>
-              <td><span class="id-tag">{{ cheque.chequeNumber.value }}</span></td>
-              <td>
-                <div class="primary-text">{{ cheque.emitterName.value }}</div>
-                <div class="secondary-text">{{ cheque.beneficiaryName.value }}</div>
-              </td>
-              <td class="amount-cell">{{ cheque.amountNumeric.value | number:'1.2-2' }} DT</td>
-              <td>
-                <div class="confidence-pill" [class.high]="cheque.overallConfidence >= 0.85" [class.low]="cheque.overallConfidence < 0.7">
-                  {{ (cheque.overallConfidence * 100).toFixed(0) }}%
-                </div>
-              </td>
-              <td>
-                <span class="status-pill" [class.valide]="cheque.status === 'VALIDATED'" [class.attente]="cheque.status === 'PENDING'" [class.rejet]="cheque.status === 'REJECTED'">
-                  {{ cheque.status === 'VALIDATED' ? 'Validé' : cheque.status === 'PENDING' ? 'En attente' : 'Rejeté' }}
-                </span>
-              </td>
-              <td style="text-align: right;">
-                <button class="btn-details">Détails</button>
-              </td>
+              <td>{{ cheque.id }}</td><td>{{ cheque.date.value }}</td><td>{{ cheque.emitterName.value }}</td><td>{{ cheque.amountNumeric.value | number:'1.2-2' }} DT</td>
+              <td>{{ cheque.status === 'VALIDATED' ? 'Validé' : cheque.status === 'REJECTED' ? 'Rejeté' : 'En attente' }}</td><td>{{ (cheque.overallConfidence * 100).toFixed(0) }}%</td>
             </tr>
           }
         }
       </tbody>
     </table>
+    <div class="pagination"><button (click)="prevPage()" [disabled]="currentPage() === 1">Précédent</button><span>Page {{ currentPage() }} / {{ totalPages() }}</span><button (click)="nextPage()" [disabled]="currentPage() === totalPages()">Suivant</button></div>
   </section>
-</div>
+</div>
