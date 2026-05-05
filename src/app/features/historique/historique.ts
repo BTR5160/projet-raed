@@ -15,7 +15,7 @@ export class HistoriqueComponent implements OnInit {
   private chequeService = inject(ChequeService);
 
   isLoading = signal(true);
-  chequesList = signal<Cheque[]>([]);
+  chequesList = this.chequeService.history;
   searchTerm = signal('');
   statusFilter = signal<'ALL' | ChequeStatus>('ALL');
   dateFilter = signal('');
@@ -46,17 +46,7 @@ export class HistoriqueComponent implements OnInit {
 
   ngOnInit() { this.loadHistory(); }
 
-  loadHistory() {
-    this.isLoading.set(true);
-    this.chequeService.getHistory().subscribe({
-      next: (data) => {
-        this.chequesList.set(data);
-        this.currentPage.set(1);
-        this.isLoading.set(false);
-      },
-      error: () => this.isLoading.set(false)
-    });
-  }
+  loadHistory() { this.isLoading.set(true); this.chequeService.getHistory().subscribe({next:()=>{this.currentPage.set(1); this.isLoading.set(false);},error:()=>this.isLoading.set(false)}); }
 
   onSearchChange(event: Event) { this.searchTerm.set((event.target as HTMLInputElement).value); this.currentPage.set(1); }
   onStatusFilterChange(event: Event) { this.statusFilter.set((event.target as HTMLSelectElement).value as 'ALL' | ChequeStatus); this.currentPage.set(1); }
