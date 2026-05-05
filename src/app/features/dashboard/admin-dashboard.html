@@ -1,0 +1,131 @@
+<div class="dashboard-view">
+  <header class="view-header">
+    <div class="title-block">
+      <h1>Supervision Générale</h1>
+      <p class="subtitle">Centre de commandement et d'analyse IA</p>
+    </div>
+    <button class="btn-refresh" (click)="loadDashboardData()" [disabled]="isLoading()">
+      <span class="icon" [class.spinning]="isLoading()">↻</span> Actualiser
+    </button>
+  </header>
+
+  @if (isLoading()) {
+    <div class="loading-state-full">
+      <div class="spinner-large"></div>
+      <p>Synchronisation des données sécurisées...</p>
+    </div>
+  } @else if (stats()) {
+    <div class="bento-grid">
+      <!-- Row 1: 4 KPI Cards -->
+      <div class="stat-card-pro">
+        <div class="card-header">
+          <span class="micro-label">CHÈQUES TRAITÉS</span>
+          <div class="icon-sm blue">📄</div>
+        </div>
+        <h3 class="value">{{ stats()!.totalProcessedToday }}</h3>
+        <p class="stat-desc">Volume total aujourd'hui</p>
+      </div>
+
+      <div class="stat-card-pro">
+        <div class="card-header">
+          <span class="micro-label">EN ATTENTE</span>
+          <div class="icon-sm gold">🕒</div>
+        </div>
+        <h3 class="value">{{ stats()!.totalPending }}</h3>
+        <p class="stat-desc">Files d'attente actives</p>
+      </div>
+
+      <div class="stat-card-pro">
+        <div class="card-header">
+          <span class="micro-label">TAUX D'ERREUR</span>
+          <div class="icon-sm red">⚠</div>
+        </div>
+        <h3 class="value">{{ stats()!.aiErrorRate }}%</h3>
+        <p class="stat-desc">Moyenne de précision IA</p>
+      </div>
+
+      <div class="stat-card-pro">
+        <div class="card-header">
+          <span class="micro-label">AGENTS CONNECTÉS</span>
+          <div class="icon-sm green">👥</div>
+        </div>
+        <h3 class="value">{{ stats()!.activeAgents }}</h3>
+        <p class="stat-desc">Session actives en cours</p>
+      </div>
+
+      <!-- Row 2: Large Chart (Left) -->
+      <section class="main-chart-card">
+        <div class="panel-header">
+          <span class="micro-label">VOLUME DE TRAITEMENT (7 JOURS)</span>
+        </div>
+        <div class="weekly-stats">
+          @for (day of weeklyData(); track day.day) {
+            <div class="bar-container">
+              <div class="bar" [style.height]="getBarHeight(day.value)">
+                <span class="bar-value">{{ day.value }}</span>
+              </div>
+              <span class="day-label">{{ day.day }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Row 2: Health & Security (Right) -->
+      <section class="health-security-card">
+        <div class="panel-header">
+          <span class="micro-label">ÉTAT DU SYSTÈME IA</span>
+        </div>
+        
+        <div class="health-monitor">
+          <div class="monitor-item">
+            <div class="item-info">
+              <span>Précision globale OCR</span>
+              <strong>98.2%</strong>
+            </div>
+            <div class="progress-bar"><div class="fill" style="width: 98.2%;"></div></div>
+          </div>
+
+          <div class="monitor-item">
+            <div class="item-info">
+              <span>Disponibilité Service</span>
+              <span class="status-dot-text">
+                <span class="dot pulse"></span> En ligne (99.9%)
+              </span>
+            </div>
+          </div>
+
+          <div class="alert-box-danger">
+            <div class="alert-content">
+              <span class="icon">🛡</span>
+              <div class="text">
+                <strong>Alertes de sécurité</strong>
+                <p>{{ stats()!.totalFraudDetected }} fraudes potentielles détectées</p>
+              </div>
+            </div>
+            <button class="btn-verify-sm">Vérifier</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Recent Activity -->
+    <section class="activity-section card-premium">
+      <div class="panel-header">
+        <span class="micro-label">ACTIVITÉ RÉCENTE DES AGENTS</span>
+      </div>
+      <div class="activity-list-modern">
+        @for (item of recentActivities(); track item.id) {
+          <div class="activity-row">
+            <div class="agent-avatar">{{ item.agentName[0] }}</div>
+            <div class="info">
+              <strong>Chèque #{{ item.chequeNumber }}</strong>
+              <span>Traité par {{ item.agentName }} · {{ item.time }}</span>
+            </div>
+            <div class="time">Aujourd'hui</div>
+            <span class="status-pill success">{{ item.status === 'VALIDATED' ? 'Validé' : 'Rejeté' }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

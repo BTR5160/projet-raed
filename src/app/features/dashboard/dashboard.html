@@ -1,0 +1,119 @@
+<header class="top-header">
+  <div>
+    <h1>Tableau de bord</h1>
+    <p class="date">{{ dateDuJour }}</p>
+  </div>
+  <button class="btn-refresh">↻ Actualiser</button>
+</header>
+
+<section class="stats-grid">
+  <!-- Chèques traités -->
+  <div class="white-card stat-card">
+    <div class="card-header">
+      <div class="icon-box blue">📄</div>
+      <span class="trend positive">{{ stats.traites.trend }}</span>
+    </div>
+    <h3>{{ stats.traites.count }}</h3>
+    <p>Chèques traités</p>
+  </div>
+
+  <!-- Validés -->
+  <div class="white-card stat-card">
+    <div class="card-header">
+      <div class="icon-box green">✓</div>
+      <span class="trend positive">{{ stats.valides.trend }}</span>
+    </div>
+    <h3>{{ stats.valides.count }}</h3>
+    <p>Validés</p>
+  </div>
+
+  <!-- Rejetés -->
+  <div class="white-card stat-card">
+    <div class="card-header">
+      <div class="icon-box red">✕</div>
+      <span class="trend negative">{{ stats.rejetes.trend }}</span>
+    </div>
+    <h3>{{ stats.rejetes.count }}</h3>
+    <p>Rejetés</p>
+  </div>
+
+  <!-- En attente -->
+  <div class="white-card stat-card">
+    <div class="card-header">
+      <div class="icon-box orange">⏱</div>
+      <span class="trend neutral">{{ stats.attente.trend }}</span>
+    </div>
+    <h3>{{ stats.attente.count }}</h3>
+    <p>En attente</p>
+  </div>
+</section>
+
+<div class="dashboard-grid">
+  <section class="white-card recent-cheques-section">
+    <div class="section-header">
+      <h2>Chèques récents</h2>
+      <button class="btn-filter">Aujourd'hui</button>
+    </div>
+
+    <div class="cheques-list">
+      @for (cheque of chequesRecents; track cheque.id) {
+      <div class="cheque-row">
+        <div class="cheque-client">
+          <h4>{{ cheque.nom }}</h4>
+          <p>{{ cheque.banque }}</p>
+        </div>
+        <div class="cheque-amount">
+          <h4>{{ cheque.montant }}</h4>
+          <p>{{ cheque.date }}</p>
+        </div>
+        <div class="cheque-status">
+          @if (cheque.score) {
+          <span class="score-circle" [ngClass]="cheque.cssClass">
+            {{ cheque.score }}
+          </span>
+          }
+          <span class="status-badge" [ngClass]="cheque.cssClass">
+            {{ cheque.statut }}
+          </span>
+        </div>
+      </div>
+      }
+    </div>
+  </section>
+
+  <section class="white-card ai-performance-section">
+    <div class="ai-header">
+      <span class="ai-icon">〽</span>
+      <span class="ai-title">PERFORMANCE IA</span>
+    </div>
+    <div class="ai-global">
+      <h2>{{ aiPerformance.globalScore }}%</h2>
+      <p>Précision de détection</p>
+    </div>
+
+    <div class="ai-bars">
+      @for (item of aiPerformance.details; track item.label) {
+      <div class="progress-item">
+        <div class="progress-info">
+          <span>{{ item.label }}</span>
+          <span [style.color]="item.color">{{ item.score }}%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" [style.width.%]="item.score" [style.background-color]="item.color"></div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="ai-stats">
+      <div class="ai-stat-row">
+        <span>Temps moyen d'analyse</span>
+        <strong>{{ aiPerformance.stats.tempsMoyen }}</strong>
+      </div>
+      <div class="ai-stat-row">
+        <span>Uptime système</span>
+        <strong>{{ aiPerformance.stats.uptime }}</strong>
+      </div>
+    </div>
+  </section>
+</div>

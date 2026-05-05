@@ -1,0 +1,107 @@
+<div class="dashboard-layout" [class.privacy-active]="isPrivacyMode()">
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v12h16V6H4zm2 3h12v2H6V9zm0 4h7v2H6v-2z"/></svg>
+      </div>
+      <div class="brand-text">
+        <h2>Digital Cheque</h2>
+        <p>BANQUE SÉCURISÉE</p>
+      </div>
+    </div>
+
+    <div class="status-indicator">
+      <span class="dot pulse"></span>
+      <span class="status-text">
+        {{ currentUser()?.role === 'ADMIN' ? 'Superviseur Système' : 'Agent d\'Opérations' }}
+      </span>
+    </div>
+
+    <nav class="nav-menu">
+      <div class="nav-title">MENU PRINCIPAL</div>
+      @for (item of navItems; track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="active" class="nav-item">
+          <span class="icon">{{ item.icon }}</span>
+          <span class="label">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="profile-card">
+        <div class="user-meta">
+          <div class="avatar-circle">
+            {{ currentUser()?.firstName?.[0] }}{{ currentUser()?.lastName?.[0] }}
+          </div>
+          <div class="user-info">
+            <h4 class="name">{{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</h4>
+            <p class="email">{{ currentUser()?.email }}</p>
+          </div>
+        </div>
+        
+        @if (currentUser()?.role === 'ADMIN') {
+          <button class="btn-switch secondary" routerLink="/user-management">
+            <span class="icon">👥</span> Gestion Agents
+          </button>
+        }
+
+        <button class="btn-logout danger-ghost" (click)="logout()">
+          <span class="icon">↪</span> Déconnexion
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" [class.light-theme]="isConfigPage()">
+    <!-- Top Header -->
+
+    <div class="page-container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <!-- Privacy Blur Overlay -->
+  @if (isPrivacyMode()) {
+    <div class="privacy-overlay" (click)="togglePrivacy()">
+      <div class="privacy-content">
+        <div class="eye-icon">👁️‍🗨️</div>
+        <h3>Mode Confidentialité Activé</h3>
+        <p>Appuyez sur ESPACE pour restaurer la visibilité</p>
+      </div>
+    </div>
+  }
+
+  <!-- Toasts Notifications -->
+  <div class="toast-container">
+    @for (toast of toasts(); track toast.id) {
+      <div class="toast-card" [ngClass]="toast.type" (click)="removeToast(toast.id)">
+        <span class="toast-icon">
+          @if (toast.type === 'success') { ✅ }
+          @else if (toast.type === 'error') { ❌ }
+          @else if (toast.type === 'warning') { ⚠️ }
+          @else { ℹ️ }
+        </span>
+        <span class="toast-message">{{ toast.message }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Session Timeout Modal -->
+  @if (showTimeoutModal()) {
+    <div class="modal-overlay">
+      <div class="modal-card timeout-card">
+        <div class="timeout-icon">⏳</div>
+        <h3>Session expirée ?</h3>
+        <p>Pour votre sécurité, vous allez être déconnecté dans <strong>{{ timeoutCountdown() }}</strong> secondes.</p>
+        <div class="modal-actions">
+          <button class="btn-extend" (click)="resetInactivityTimer()">Rester connecté</button>
+          <button class="btn-logout" (click)="logout()">Se déconnecter</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+

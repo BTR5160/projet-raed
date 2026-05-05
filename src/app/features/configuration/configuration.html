@@ -1,0 +1,81 @@
+<div class="config-view">
+  <header class="config-header">
+    <div class="title-block">
+      <h1>Configuration du Compte</h1>
+      <p class="subtitle">Gérez vos paramètres et votre sécurité opérationnelle</p>
+    </div>
+  </header>
+
+  <div class="config-grid">
+    <!-- Section Profil -->
+    <section class="white-card profile-section">
+      <div class="section-title">
+        <span class="icon">👤</span>
+        <h2>Informations Personnelles</h2>
+      </div>
+
+      <div class="profile-preview">
+        <div class="avatar-large">
+          {{ currentUser()?.firstName?.[0] }}{{ currentUser()?.lastName?.[0] }}
+        </div>
+        <div class="profile-meta">
+          <h3>{{ currentUser()?.firstName }} {{ currentUser()?.lastName }}</h3>
+          <span class="badge-role">{{ currentUser()?.role === 'ADMIN' ? 'Administrateur' : 'Agent de Saisie' }}</span>
+        </div>
+      </div>
+
+      <form class="config-form" (submit)="saveProfile()">
+        <div class="form-group">
+          <label class="micro-label">PRÉNOM</label>
+          <input type="text" [value]="currentUser()?.firstName" [disabled]="isAgent()" name="firstName">
+        </div>
+        <div class="form-group">
+          <label class="micro-label">NOM</label>
+          <input type="text" [value]="currentUser()?.lastName" [disabled]="isAgent()" name="lastName">
+        </div>
+        <div class="form-group">
+          <label class="micro-label">ADRESSE E-MAIL</label>
+          <input type="email" [value]="currentUser()?.email" [disabled]="isAgent()" name="email">
+        </div>
+
+        @if (isAgent()) {
+          <div class="info-box-alert">
+            <span class="icon">ℹ</span>
+            <p>Pour toute modification de vos informations, veuillez contacter votre administrateur système.</p>
+          </div>
+        } @else {
+          <button type="submit" class="btn-primary-pro">Enregistrer les modifications</button>
+        }
+      </form>
+    </section>
+
+    <!-- Section Sécurité -->
+    <section class="white-card security-section">
+      <div class="section-title">
+        <span class="icon">🔒</span>
+        <h2>Authentification</h2>
+      </div>
+
+      <p class="section-desc">Mise à jour sécurisée du mot de passe de session.</p>
+
+      <form class="config-form" (submit)="updatePassword()">
+        <div class="form-group">
+          <label class="micro-label">ANCIEN MOT DE PASSE</label>
+          <input type="password" [(ngModel)]="security.oldPassword" name="oldPwd" placeholder="••••••••" [disabled]="isAgent()">
+        </div>
+        <div class="form-group">
+          <label class="micro-label">NOUVEAU MOT DE PASSE</label>
+          <input type="password" [(ngModel)]="security.newPassword" name="newPwd" placeholder="••••••••" [disabled]="isAgent()">
+        </div>
+        <div class="form-group">
+          <label class="micro-label">CONFIRMER LE MOT DE PASSE</label>
+          <input type="password" [(ngModel)]="security.confirmPassword" name="confirmPwd" placeholder="••••••••" [disabled]="isAgent()">
+        </div>
+        
+        <button type="submit" class="btn-secondary-pro" [disabled]="isAgent()">
+          Mettre à jour le mot de passe
+        </button>
+      </form>
+    </section>
+  </div>
+</div>

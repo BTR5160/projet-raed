@@ -1,0 +1,79 @@
+<div class="profile-view">
+  <header class="view-header">
+    <h1>Mon Profil</h1>
+    <p class="subtitle">Gérez vos informations personnelles et vos préférences de sécurité.</p>
+  </header>
+
+  <div class="profile-grid">
+    <!-- Colonne Gauche : Résumé -->
+    <aside class="profile-aside white-card">
+      <div class="avatar-section">
+        <div class="avatar-large">
+          {{ user()?.firstName?.[0] }}{{ user()?.lastName?.[0] }}
+        </div>
+        <button class="btn-change-avatar">Modifier la photo</button>
+      </div>
+
+      <div class="user-info-summary">
+        <h3>{{ user()?.firstName }} {{ user()?.lastName }}</h3>
+        <span class="role-badge">{{ user()?.role }}</span>
+        <p class="email-text">{{ user()?.email }}</p>
+      </div>
+
+      <nav class="profile-nav">
+        <a href="#" class="nav-item active">Informations personnelles</a>
+        <a href="#" class="nav-item">Sécurité & Mot de passe</a>
+        <a href="#" class="nav-item">Notifications</a>
+      </nav>
+    </aside>
+
+    <!-- Colonne Droite : Formulaire -->
+    <section class="profile-main white-card">
+      <div class="card-header">
+        <h2>Détails du compte</h2>
+        <p>Mettez à jour vos informations de contact</p>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" formControlName="firstName">
+          </div>
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" formControlName="lastName">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Adresse e-mail (Non modifiable)</label>
+          <input type="email" formControlName="email">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="text" formControlName="phone">
+          </div>
+          <div class="form-group">
+            <label>Agence / Département</label>
+            <input type="text" formControlName="agence">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          @if (saveSuccess()) {
+            <span class="success-msg">✓ Modifications enregistrées</span>
+          }
+          <button type="submit" class="btn-save" [disabled]="profileForm.invalid || isSaving()">
+            @if (isSaving()) {
+              <span class="spinner-tiny"></span>
+            }
+            Sauvegarder les modifications
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

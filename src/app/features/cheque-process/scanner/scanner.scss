@@ -1,0 +1,105 @@
+.scanner-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.view-header {
+  margin-bottom: 3rem;
+  .title-block {
+    h1 { font-size: 2.25rem; font-weight: 800; color: #0F172A; margin: 0; letter-spacing: -0.03em; }
+    .subtitle { color: #64748B; font-size: 1.1rem; margin-top: 0.4rem; font-weight: 500; }
+  }
+}
+
+.scanner-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* --- SCAN AREA (GLASSMOPHISM) --- */
+.scan-area {
+  .glass-drop-zone {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    border: 2px dashed rgba(255, 255, 255, 0.6);
+    border-radius: 40px;
+    padding: 6rem 2rem;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+
+    &:hover, &.drag-over {
+      background: rgba(255, 255, 255, 0.6);
+      border-color: #2563EB;
+      transform: translateY(-5px);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+    }
+
+    .idle-ui {
+      .icon-circle {
+        width: 80px; height: 80px; background: white; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 2rem; font-size: 2.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      }
+      h3 { font-size: 1.75rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem; }
+      p { color: #64748B; margin-bottom: 2.5rem; font-weight: 500; font-size: 1.1rem; }
+      
+      .btn-pill-primary {
+        background: #2563EB; color: white; border: none; padding: 1rem 2.5rem;
+        border-radius: 40px; font-weight: 700; font-size: 1rem; cursor: pointer;
+        transition: all 0.2s; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        &:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3); }
+      }
+    }
+
+    .scan-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.9); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 10;
+      
+      .laser-beam {
+        width: 100%; height: 3px; background: linear-gradient(to right, transparent, #2563EB, transparent);
+        box-shadow: 0 0 15px #2563EB; position: absolute; top: 0; left: 0;
+        animation: scanMove 2.5s linear infinite;
+      }
+      .scan-status { margin-top: 2rem; font-weight: 800; color: #0F172A; letter-spacing: 0.2em; text-transform: uppercase; }
+    }
+  }
+}
+
+/* --- PREVIEW PANEL --- */
+.preview-panel {
+  .panel-card {
+    background: white; border-radius: 32px; padding: 2rem;
+    border: 1px solid #E2E8F0; box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+    
+    h3 { font-size: 1.1rem; font-weight: 800; color: #0F172A; margin: 0 0 1.5rem; }
+
+    .cheque-mini {
+      background: #F8FAFC; border-radius: 20px; padding: 1rem; border: 1px solid #E2E8F0; margin-bottom: 1.5rem;
+      img { width: 100%; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 1rem; }
+      .mini-meta {
+        display: flex; flex-direction: column; gap: 0.25rem;
+        strong { color: #0F172A; font-size: 1.1rem; }
+        span { color: #64748B; font-size: 0.85rem; font-weight: 600; }
+      }
+    }
+
+    .btn-full-validate {
+      width: 100%; padding: 1.1rem; background: #064e3b; color: white; border: none;
+      border-radius: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+      &:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(6, 78, 59, 0.2); }
+    }
+
+    .empty-state { padding: 4rem 1rem; text-align: center; color: #94A3B8; font-weight: 600; font-style: italic; }
+  }
+}
+
+@keyframes scanMove { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

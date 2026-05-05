@@ -1,0 +1,61 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <header class="login-header">
+      <div class="logo-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2z"/>
+          <path d="M20 18H4v-6h16v6z"/>
+          <path d="M20 8H4V6h16v2z"/>
+        </svg>
+      </div>
+      <h1>Digital Cheque</h1>
+      <p>Portail Bancaire Professionnel</p>
+    </header>
+
+    @if (errorMessage()) {
+      <div class="alert-error-premium">
+        <span class="icon">⚠️</span>
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label>Identifiant Email</label>
+        <div class="input-wrapper no-icon">
+          <input type="email" formControlName="email" placeholder="nom@banque.tn">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <div class="input-wrapper no-icon">
+          <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••">
+          <button type="button" class="eye-btn" (click)="togglePassword()">
+            @if (showPassword()) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye-off"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            }
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login" [disabled]="loginForm.invalid || isLoading()">
+        @if (isLoading()) {
+          <span class="spinner-white"></span> Authentification...
+        } @else {
+          Accéder à la plateforme
+        }
+      </button>
+    </form>
+
+    <footer class="login-footer">
+      <p>Besoin d'aide ? <a href="#">Contacter le support</a></p>
+    </footer>
+  </div>
+
+  <div class="page-certification">
+    <span class="icon">🛡️</span> Certifié Sécurité Bancaire ISO-27001
+  </div>
+</div>

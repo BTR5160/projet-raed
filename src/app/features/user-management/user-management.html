@@ -1,0 +1,145 @@
+<div class="user-management-view">
+  <header class="view-header">
+    <div class="title-block">
+      <h1>Gestion des utilisateurs</h1>
+      <p class="stats-count">{{ users().length }} comptes enregistrés</p>
+    </div>
+    <button class="btn-add" (click)="openAddModal()">
+      <span class="plus-icon">+</span> Nouvel utilisateur
+    </button>
+  </header>
+
+  <div class="summary-cards">
+    <div class="mini-card">
+      <div class="icon-wrapper blue-light">🛡️</div>
+      <div class="card-info">
+        <h3>{{ agentsCount() }}</h3>
+        <p>Total agents</p>
+      </div>
+    </div>
+    <div class="mini-card">
+      <div class="icon-wrapper yellow-light">🛡️</div>
+      <div class="card-info">
+        <h3>{{ adminsCount() }}</h3>
+        <p>Administrateurs</p>
+      </div>
+    </div>
+    <div class="mini-card">
+      <div class="icon-wrapper green-light">👤</div>
+      <div class="card-info">
+        <h3>{{ users().length }}</h3>
+        <p>Comptes actifs</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-container">
+    <div class="search-box">
+      <span class="icon-search">🔍</span>
+      <input type="text" placeholder="Rechercher un utilisateur...">
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>UTILISATEUR</th>
+          <th>RÔLE</th>
+          <th>STATUT</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="4" class="loading-cell">
+              <div class="spinner-small"></div> Chargement...
+            </td>
+          </tr>
+        } @else {
+          @for (user of users(); track user.id) {
+          <tr [class.inactive]="!user.isActive">
+            <td class="user-profile">
+              <div class="initials-circle">{{ getInitials(user) }}</div>
+              <div class="user-meta">
+                <span class="name">{{ user.firstName }} {{ user.lastName }}</span>
+                <span class="email">{{ user.email }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge" [class.role-admin]="user.role === 'ADMIN'" [class.role-agent]="user.role === 'AGENT'">
+                {{ user.role === 'ADMIN' ? 'Administrateur' : 'Agent' }}
+              </span>
+            </td>
+            <td>
+              <span class="status-pill" [class.active]="user.isActive" [class.blocked]="!user.isActive">
+                {{ user.isActive ? 'Actif' : 'Bloqué' }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-icon" (click)="openEditModal(user)" title="Modifier">✏️</button>
+              <button class="btn-icon" (click)="toggleStatus(user)" [title]="user.isActive ? 'Bloquer' : 'Débloquer'">
+                {{ user.isActive ? '🚫' : '🔓' }}
+              </button>
+            </td>
+          </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal Creation / Edition -->
+  @if (isModalOpen()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ modalMode() === 'ADD' ? 'Créer un utilisateur' : 'Modifier l\'utilisateur' }}</h2>
+          <button class="btn-close" (click)="closeModal()">×</button>
+        </div>
+        
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Prénom</label>
+              <input type="text" formControlName="firstName" placeholder="Prénom">
+            </div>
+            <div class="form-group">
+              <label>Nom</label>
+              <input type="text" formControlName="lastName" placeholder="Nom">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Adresse e-mail</label>
+            <input type="email" formControlName="email" placeholder="email@biat.com.tn">
+          </div>
+
+          @if (modalMode() === 'ADD') {
+            <div class="form-row">
+              <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" formControlName="password" placeholder="••••••••">
+              </div>
+              <div class="form-group">
+                <label>Confirmer</label>
+                <input type="password" formControlName="confirmPassword" placeholder="••••••••">
+              </div>
+            </div>
+          }
+
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" (click)="closeModal()">Annuler</button>
+            <button type="submit" class="btn-save" [disabled]="userForm.invalid || isSubmitting()">
+              @if (isSubmitting()) {
+                <span class="spinner-tiny"></span>
+              }
+              {{ modalMode() === 'ADD' ? 'Créer le compte' : 'Sauvegarder' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>
